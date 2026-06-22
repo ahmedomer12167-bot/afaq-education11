@@ -1,0 +1,1 @@
+{"name":"آفاق التعليمية","short_name":"آفاق","start_url":"index.html","display":"standalone","background_color":"#030b25","theme_color":"#071a4a","dir":"rtl","lang":"ar","icons":[{"src":"assets/hero-interface.jpeg","sizes":"512x512","type":"image/jpeg"}]}
