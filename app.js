@@ -1,64 +1,105 @@
-function openLogin(role){
+const loginButtons = document.querySelectorAll(
+  ".login-btn, .primary-btn, .secondary-btn, .account-card button"
+);
 
-let roleName = "";
+const themeButton = document.querySelector(".theme-btn");
+const accountCards = document.querySelectorAll(".account-card");
+const body = document.body;
 
-switch(role){
+function createLoginModal(role = "") {
+  const oldModal = document.querySelector(".login-modal");
+  if (oldModal) oldModal.remove();
 
-case "admin":
-roleName = "المدير";
-break;
+  const modal = document.createElement("div");
+  modal.className = "login-modal";
 
-case "teacher":
-roleName = "المدرس";
-break;
+  modal.innerHTML = `
+    <div class="modal-box">
+      <button class="close-modal">×</button>
+      <h2>اختر نوع الدخول</h2>
+      <p>حدد الحساب الذي تريد الدخول إليه في منصة آفاق التعليمية</p>
 
-case "student":
-roleName = "الطالب";
-break;
+      <div class="modal-roles">
+        <button data-role="student">🎓 الطالب</button>
+        <button data-role="teacher">👨‍🏫 المعلم</button>
+        <button data-role="parent">👨‍👩‍👧 ولي الأمر</button>
+        <button data-role="admin">🛡️ المدير</button>
+      </div>
 
-case "parent":
-roleName = "ولي الأمر";
-break;
+      <div class="selected-role">
+        ${role ? "تم اختيار: " + role : "لم يتم اختيار نوع الحساب بعد"}
+      </div>
+    </div>
+  `;
 
+  document.body.appendChild(modal);
+
+  modal.querySelector(".close-modal").onclick = () => modal.remove();
+
+  modal.addEventListener("click", function (e) {
+    if (e.target.classList.contains("login-modal")) {
+      modal.remove();
+    }
+  });
+
+  modal.querySelectorAll(".modal-roles button").forEach((btn) => {
+    btn.onclick = () => {
+      const roleName = btn.textContent.trim();
+      modal.querySelector(".selected-role").textContent =
+        "سيتم فتح تسجيل دخول: " + roleName;
+    };
+  });
 }
 
-alert("سيتم فتح صفحة تسجيل دخول " + roleName + " في الخطوة القادمة");
+loginButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    let role = "";
+
+    if (button.closest(".student")) role = "الطالب";
+    if (button.closest(".teacher")) role = "المعلم";
+    if (button.closest(".parent")) role = "ولي الأمر";
+    if (button.closest(".admin")) role = "المدير";
+
+    createLoginModal(role);
+  });
+});
+
+accountCards.forEach((card) => {
+  card.addEventListener("mousemove", (e) => {
+    const rect = card.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * -8;
+    const rotateY = ((x - centerX) / centerX) * 8;
+
+    card.style.transform = `
+      perspective(900px)
+      rotateX(${rotateX}deg)
+      rotateY(${rotateY}deg)
+      translateY(-12px)
+      scale(1.03)
+    `;
+  });
+
+  card.addEventListener("mouseleave", () => {
+    card.style.transform =
+      "perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)";
+  });
+});
+
+if (themeButton) {
+  themeButton.addEventListener("click", () => {
+    body.classList.toggle("light-mode");
+
+    if (body.classList.contains("light-mode")) {
+      themeButton.textContent = "🌙";
+    } else {
+      themeButton.textContent = "☀️ 🌙";
+    }
+  });
 }
-
-document.addEventListener("mousemove",(e)=>{
-
-const cards = document.querySelectorAll(".login-card");
-
-cards.forEach(card=>{
-
-const rect = card.getBoundingClientRect();
-
-const x = e.clientX - rect.left;
-const y = e.clientY - rect.top;
-
-const centerX = rect.width / 2;
-const centerY = rect.height / 2;
-
-const rotateY = (x - centerX) / 25;
-const rotateX = -(y - centerY) / 25;
-
-card.style.transform =
-`perspective(1000px)
-rotateX(${rotateX}deg)
-rotateY(${rotateY}deg)
-translateY(-10px)`;
-
-});
-
-});
-
-document.addEventListener("mouseleave",()=>{
-
-document.querySelectorAll(".login-card").forEach(card=>{
-
-card.style.transform =
-"perspective(1000px) rotateX(0deg) rotateY(0deg)";
-
-});
-
-});
